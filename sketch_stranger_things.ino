@@ -1,4 +1,5 @@
 #include <FastLED.h>
+
 #define PIN 4
 #define NUM_LEDS 27
 #define MES_LIM 16 //limit to length of message presented
@@ -29,28 +30,88 @@ int mes[ ][MES_LIM] = {
   {0,23,5,18,5,0,23,1,9,20,9,14,7,0,0,0 }, // we’re waiting
   {1,12,23,1,25,19,23,1,20,3,8,9,14,25,15,21 } // always watching you
 };
+
+char messages[][MES_LIM] = {
+  "hello world",
+  "we’re all mad here",
+  "here’s Johnny",
+  "run",
+  "hide",
+  "too late",
+  "beware",
+  "goodbye",
+  "help me",
+  "stay with us",
+  "scream for us",
+  "trapped",
+  "look alive",
+  "rest in pieces",
+  "die slowly",
+  "come and play",
+  "see you soon",
+  "we’re waiting",
+  "always watching you"
+};
+
 int i = 0;
 
 void setup() {
-FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS);
-FastLED.setBrightness( 200);
+  FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS);
+  FastLED.setBrightness( 200 );
 }
 
-void loop(){  
-i = random( 0 , NUM_WORDS - 1);
-for(int pos = 0; pos < MES_LIM; pos++) {
-  int cha = mes[ i ][ pos ];
-      leds[cha].setRGB( red[cha], green[cha] ,blue[cha] ); //letter light and color
-      FastLED.show(); //send 
-      delay(500);
-      leds[cha].fadeToBlackBy( 128 );
-      FastLED.show();
-      delay(100); 
-      leds[cha].setRGB ( 0, 0, 0 );
-      FastLED.show();
-      delay(250);
+void oldLoop(){  
+  i = random( 0 , NUM_WORDS - 1);
+  for(int pos = 0; pos < MES_LIM; pos++) {
+    int cha = mes[ i ][ pos ];
+  }
 }
 
-delay(random(180000,300000)); //delay between words
+void loop() {
+  // Randomly choose the next message to display
+  i = random( 0, (int)sizeof(messages)/MES_LIM - 1);
+  
+  // Display message, one letter at a time
+  for(int c = 0; c < MES_LIM; c++) {
+    int LED_Address = getAddress(messages[i][c]);
+    flashBulb(LED_Address);
+  }
+
+  // Random delay of 3 to 5 minutes between displays
+  delay(random(180000,300000));
 }
 
+int getAddress(char c) {
+/* 
+ * Conversion of Char c into integer address
+ *    Case insensitve, provides an integer corresponding 
+ *    to the letter order in the English Alphabet, 
+ *    indexed at 1. e.g. A = 1, a = 1.
+ *    All other characters return 0.
+ */
+  if (c >= 'A' && c <= 'Z') {
+    return (c - 'A' + 1);
+  }
+  else if (c >= 'a' && c <= 'z') {
+    return (c - 'a' + 1);
+  }
+  else {
+    return 0;
+}
+
+void flashBulb(int address) {
+    // Set appropriate bulb to the appropriate color 
+    // (as defined in the color arrays above)
+  leds[address].setRGB( red[address], green[address] ,blue[address] );
+  FastLED.show(); 
+  delay( 500 );
+    // Fade brightness by 128/256ths for 100 ms
+    // This is to provide a sort of flicker effect
+  leds[address].fadeToBlackBy( 128 );
+  FastLED.show();
+  delay( 100 ); 
+    // Return bulb to black
+  leds[address].setRGB ( 0, 0, 0 );
+  FastLED.show();
+  delay( 250 );
+}
