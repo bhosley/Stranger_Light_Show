@@ -11,7 +11,7 @@ int green[NUM_LEDS] = {random(0,255),255,0,0,200,255,255,0,0,250,0,250,255,200,0
 int blue[NUM_LEDS]  = {random(0,255),255,255,255,255,0,0,0,255,255,250,0,255,0,255,0,255,0,255,255,0,255,0,255,0,0,255 };
 
 char messages[][MES_LIM] = {
-  "hello world",
+  "Hello World",
   "we’re all mad here",
   "here’s Johnny",
   "run",
@@ -32,12 +32,12 @@ char messages[][MES_LIM] = {
   "always watching you"
 };
 
-int i = 0;
-
 void setup() {
   FastLED.addLeds<NEOPIXEL, PIN>(leds, NUM_LEDS);
-  FastLED.setBrightness( 200 );
+  FastLED.setBrightness( 200 ); 
 }
+
+int i = 0;
 
 void loop() {
   // Randomly choose the next message to display
